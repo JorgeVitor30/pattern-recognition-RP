@@ -87,3 +87,24 @@ target/
 
 # Mypy cache
 .mypy_cache/
+
+/bin
+venv/bin
+venv/
+
+.env
+.vscode/
+.idea/
+
+*.iml
+*.pyc
+*.pyo
+
+# Ignorar arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar arquivos de pacotes
+*.egg-info/
+dist/
+build/
