@@ -43,7 +43,7 @@ class GradientDescent:
         plt.ylabel('Y')
         plt.grid(True)
 
-        plt.savefig(f"reports/figures/GradientDescent/pngs/frame_{index}.png")
+        plt.savefig(f"reports/figures/GradienteDescendente/pngs/frame_{index}.png")
         plt.close()
 
     def create_gif(self, frames, output_file, duration=100):
@@ -60,5 +60,5 @@ gd.fit(X=X, y=y)
 frames = []
 for i, (w0, w1) in enumerate(gd.w_history):
     gd.plot_regression_line(X, y, w0, w1, i)
-    frames.append(f"reports/figures/GradientDescent/pngs/frame_{i}.png")
-gd.create_gif(frames, "reports/figures/GradientDescent/gif/regression_animation.gif", 50)
+    frames.append(f"reports/figures/GradienteDescendente/pngs/frame_{i}.png")
+gd.create_gif(frames, "reports/figures/GradienteDescendente/gif/regression_animation.gif", 50)
