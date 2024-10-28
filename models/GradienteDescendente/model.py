@@ -32,9 +32,10 @@ class GradientDescent:
         return y_pred.to_numpy()
 
     def plot_regression_line(self, x, y, w0, w1, index):
+        y_pred = self.predict = w0 + w1 * x  
+        
         plt.figure()
         plt.scatter(x, y, color='blue')
-        y_pred = w0 + w1 * x  
         plt.plot(x, y_pred, color='red')  
         plt.title(f'Iteração {index}: w0={w0:.2f}, w1={w1:.2f}')
         plt.xlim(x.min() - 0.3, x.max() + 0.3)
