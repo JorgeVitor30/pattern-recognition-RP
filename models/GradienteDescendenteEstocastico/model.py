@@ -6,12 +6,13 @@ import io
 
 
 class StochasticGradientDescent:
-    def __init__(self, n_epochs: int = 1000, learning_rate: float = 0.01):
+    def __init__(self, n_epochs: int = 1000, learning_rate: float = 0.001):
         self.n_epochs = n_epochs
         self.learning_rate = learning_rate
         self.w0 = 0
         self.w1 = 0
         self.w_history = []
+        self.mse_history = []
 
     def fit(self, X: pd.DataFrame, y: pd.DataFrame):
         if (len(X) != len(y)): return False
@@ -26,12 +27,15 @@ class StochasticGradientDescent:
             y_shuffled = data.iloc[:, 1]
             
             for pattern in range(0, len(X_shuffled)):
-                self.predicts[pattern] = self.w0 + self.w1 * X[pattern]
-                self.errors[pattern] = y[pattern] - self.predicts[pattern]
+                self.predicts[pattern] = self.w0 + self.w1 * X_shuffled[pattern]
+                self.errors[pattern] = y_shuffled[pattern] - self.predicts[pattern]
 
                 self.w_history.append((self.w0, self.w1))
+            
                 self.w0 = self.w0 + self.learning_rate * self.errors[pattern]
-                self.w1 = self.w1 + self.learning_rate * self.errors[pattern] * X[pattern]
+                self.w1 = self.w1 + self.learning_rate * self.errors[pattern] * X_shuffled[pattern]
+
+            self.mse_history.append(np.mean(np.square(self.errors))) 
             
     def predict(self, X: pd.DataFrame):
         y_pred = self.w0 + self.w1 * X
@@ -56,16 +60,3 @@ class StochasticGradientDescent:
     def create_gif(self, frames, output_file, duration=100):
         imgs = [Image.open(frame) for frame in frames]
         imgs[0].save(output_file, save_all=True, append_images=imgs[1:], duration=duration, loop=0)
-                
-
-df = pd.read_csv("data/raw/artificial1d.csv", header=None)
-X, y = df.iloc[:, 0], df.iloc[:, 1]
-
-gds = StochasticGradientDescent(n_epochs=200)
-gds.fit(X, y)
-
-frames = []
-for i, (w0, w1) in enumerate(gds.w_history):
-    img = gds.plot_regression_line(X, y, w0, w1, i)
-    frames.append(f"reports/figures/GradienteDescendenteEstocastico/pngs/frame_{i}.png")
-gds.create_gif(frames, "reports/figures/GradienteDescendenteEstocastico/gif/regression_animation.gif", 20)
