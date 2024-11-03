@@ -5,7 +5,7 @@ from PIL import Image
 
 
 class GradientDescent:
-    def __init__(self, n_epochs: int = 1000, learning_rate: float = 0.01):
+    def __init__(self, n_epochs: int = 1000, learning_rate: float = 0.02):
         self.n_epochs = n_epochs
         self.learning_rate = learning_rate
         self.w0 = 0

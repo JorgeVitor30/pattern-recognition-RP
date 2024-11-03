@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 import io
+from sklearn.utils import shuffle
 
 
 class StochasticGradientDescent:
@@ -21,22 +22,19 @@ class StochasticGradientDescent:
         self.errors = [0] * len(X)
 
         for _ in range(0, self.n_epochs):
-            data = pd.concat([X, y], axis=1)
-            data = data.sample(frac=1).reset_index(drop=True)  
-            X_shuffled = data.iloc[:, 0] 
-            y_shuffled = data.iloc[:, 1]
+            X, y = shuffle(X, y)
             
-            for pattern in range(0, len(X_shuffled)):
-                self.predicts[pattern] = self.w0 + self.w1 * X_shuffled[pattern]
-                self.errors[pattern] = y_shuffled[pattern] - self.predicts[pattern]
+            for pattern in range(0, len(X)):
+                self.predicts[pattern] = self.w0 + self.w1 * X[pattern]
+                self.errors[pattern] = y[pattern] - self.predicts[pattern]
 
                 self.w_history.append((self.w0, self.w1))
             
                 self.w0 = self.w0 + self.learning_rate * self.errors[pattern]
-                self.w1 = self.w1 + self.learning_rate * self.errors[pattern] * X_shuffled[pattern]
+                self.w1 = self.w1 + self.learning_rate * self.errors[pattern] * X[pattern]
 
-            self.mse_history.append(np.mean(np.square(self.errors))) 
+                self.mse_history.append(np.mean((y - self.predict(X)) ** 2)) 
             
     def predict(self, X: pd.DataFrame):
         y_pred = self.w0 + self.w1 * X
-        return y_pred.to_numpy()
+        return y_pred
