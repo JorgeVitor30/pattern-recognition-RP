@@ -40,23 +40,3 @@ class StochasticGradientDescent:
     def predict(self, X: pd.DataFrame):
         y_pred = self.w0 + self.w1 * X
         return y_pred.to_numpy()
-    
-    def plot_regression_line(self, x, y, w0, w1, index):
-        y_pred = self.predict = w0 + w1 * x  
-        
-        plt.figure()
-        plt.scatter(x, y, color='blue')
-        plt.plot(x, y_pred, color='red')  
-        plt.title(f'Iteração {index}: w0={w0:.2f}, w1={w1:.2f}')
-        plt.xlim(x.min() - 0.3, x.max() + 0.3)
-        plt.ylim(y.min() - 0.3, y.max() + 0.3)
-        plt.xlabel('X')
-        plt.ylabel('Y')
-        plt.grid(True)
-
-        plt.savefig(f"reports/figures/GradienteDescendenteEstocastico/pngs/frame_{index}.png")
-        plt.close()
-
-    def create_gif(self, frames, output_file, duration=100):
-        imgs = [Image.open(frame) for frame in frames]
-        imgs[0].save(output_file, save_all=True, append_images=imgs[1:], duration=duration, loop=0)
