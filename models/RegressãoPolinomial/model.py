@@ -32,16 +32,13 @@ class PolynomialRegression:
         y_pred_scaled = X_transformed @ self.w
         y_pred = self.scaler_y.inverse_transform(y_pred_scaled) 
         return y_pred
+    
+    def tranform_columns(self, X: np.ndarray):       
+        transformed_columns = [X]
+        for degree in range(2, self.np + 1):
+            transformed_columns.append(np.power(X, degree))
 
-    def tranform_columns(self, X: np.ndarray):
-        X_transformed = pd.DataFrame(X)
-        
-        for grau in range(2, self.np + 1):
-            for coluna in X_transformed.columns:
-                X_transformed[f"{coluna}^{grau}"] = X_transformed[coluna] ** grau
-        
-        return X_transformed.values
-
+        return np.hstack(transformed_columns)
 
 class DataNormalizer:
     def __init__(self, feature_range=(0, 1)):

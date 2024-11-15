@@ -16,7 +16,10 @@ class PolynomialRegressionL2:
     def fit(self, X: pd.DataFrame, y: pd.DataFrame):
         if len(X) != len(y):
             raise ValueError("Número de registros diferente entre X e y")
-                
+        
+        if X.ndim == 1:
+            X = X.values.reshape(-1, 1)
+            
         X_scaled = self.scaler_X.fit_transform(X) 
         X_transformed = self.tranform_columns(X_scaled)  
         X_transformed = np.hstack((np.ones((X_transformed.shape[0], 1)), X_transformed))  
@@ -27,7 +30,10 @@ class PolynomialRegressionL2:
         I[0, 0] = 0 
         self.w = np.linalg.pinv(X_transformed.T @ X_transformed + self.lambda_ * I) @ X_transformed.T @ y_scaled
 
-    def predict(self, X: pd.DataFrame):              
+    def predict(self, X: pd.DataFrame):   
+        if X.ndim == 1:
+            X = X.values.reshape(-1, 1)  
+
         X_scaled = self.scaler_X.transform(X)
         X_transformed = self.tranform_columns(X_scaled)
         X_transformed = np.hstack((np.ones((X_transformed.shape[0], 1)), X_transformed)) 
@@ -36,14 +42,12 @@ class PolynomialRegressionL2:
         y_pred = self.scaler_y.inverse_transform(y_pred_scaled) 
         return y_pred
 
-    def tranform_columns(self, X: np.ndarray):
-        X_transformed = pd.DataFrame(X)
-        
-        for grau in range(2, self.np + 1):
-            for coluna in X_transformed.columns:
-                X_transformed[f"{coluna}^{grau}"] = X_transformed[coluna] ** grau
-        
-        return X_transformed.values
+    def tranform_columns(self, X: np.ndarray):       
+        transformed_columns = [X]
+        for degree in range(2, self.np + 1):
+            transformed_columns.append(np.power(X, degree))
+
+        return np.hstack(transformed_columns)
 
 class DataNormalizer:
     def __init__(self, feature_range=(0, 1)):
