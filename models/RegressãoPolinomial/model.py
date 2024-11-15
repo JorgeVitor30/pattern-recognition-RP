@@ -15,7 +15,10 @@ class PolynomialRegression:
     def fit(self, X: pd.DataFrame, y: pd.DataFrame):
         if len(X) != len(y):
             raise ValueError("Número de registros diferente entre X e y")
-                
+
+        if X.ndim == 1:
+            X = X.values.reshape(-1, 1) 
+
         X_scaled = self.scaler_X.fit_transform(X) 
         X_transformed = self.tranform_columns(X_scaled)  
         X_transformed = np.hstack((np.ones((X_transformed.shape[0], 1)), X_transformed)) 
@@ -24,7 +27,10 @@ class PolynomialRegression:
         
         self.w = np.linalg.pinv(X_transformed.T @ X_transformed) @ X_transformed.T @ y_scaled
 
-    def predict(self, X: pd.DataFrame):      
+    def predict(self, X: pd.DataFrame): 
+        if X.ndim == 1:
+            X = X.values.reshape(-1, 1)
+                 
         X_scaled = self.scaler_X.transform(X)
         X_transformed = self.tranform_columns(X_scaled)
         X_transformed = np.hstack((np.ones((X_transformed.shape[0], 1)), X_transformed))  
