@@ -16,11 +16,9 @@ class PolynomialRegressionL2:
     def fit(self, X: pd.DataFrame, y: pd.DataFrame):
         if len(X) != len(y):
             raise ValueError("Número de registros diferente entre X e y")
-        
-        original_columns_X = X.columns
-        
+                
         X_scaled = self.scaler_X.fit_transform(X) 
-        X_transformed = self.tranform_columns(X_scaled, original_columns_X)  
+        X_transformed = self.tranform_columns(X_scaled)  
         X_transformed = np.hstack((np.ones((X_transformed.shape[0], 1)), X_transformed))  
 
         y_scaled = self.scaler_y.fit_transform(y.values.reshape(-1, 1))  
@@ -29,19 +27,17 @@ class PolynomialRegressionL2:
         I[0, 0] = 0 
         self.w = np.linalg.pinv(X_transformed.T @ X_transformed + self.lambda_ * I) @ X_transformed.T @ y_scaled
 
-    def predict(self, X: pd.DataFrame):      
-        original_columns = X.columns
-        
+    def predict(self, X: pd.DataFrame):              
         X_scaled = self.scaler_X.transform(X)
-        X_transformed = self.tranform_columns(X_scaled, original_columns)
+        X_transformed = self.tranform_columns(X_scaled)
         X_transformed = np.hstack((np.ones((X_transformed.shape[0], 1)), X_transformed)) 
 
         y_pred_scaled = X_transformed @ self.w
         y_pred = self.scaler_y.inverse_transform(y_pred_scaled) 
         return y_pred
 
-    def tranform_columns(self, X: np.ndarray, original_columns: pd.Index):
-        X_transformed = pd.DataFrame(X, columns=original_columns)
+    def tranform_columns(self, X: np.ndarray):
+        X_transformed = pd.DataFrame(X)
         
         for grau in range(2, self.np + 1):
             for coluna in X_transformed.columns:
